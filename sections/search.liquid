@@ -1,66 +1,506 @@
-{% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
+<section class="search-page">
+  <div class="section-container">
+    <h1 class="search-title">{{ 'search.title' | t }}</h1>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
-{% endcomment %}
+    {% if search.performed %}
+      {% if search.results_count == 0 %}
+        <div class="no-results">
+          <div class="no-results-icon">🔍</div>
+          <h2>No results found</h2>
+          <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
+        </div>
+      {% else %}
+        <div class="search-header">
+          <p class="search-results-info">{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+        </div>
 
-<h1>{{ 'search.title' | t }}</h1>
+        <div class="search-results">
+          {% paginate search.results by 20 %}
+            {% for result in search.results %}
+              <div class="result-card" style="animation-delay: {{ forloop.index | times: 0.1 }}s">
+                <div class="result-badge">
+                  {% if result.object_type == 'product' and result.compare_at_price > result.price %}
+                    <span class="sale-badge">Sale</span>
+                  {% endif %}
+                  <span class="type-badge">
+                    {% case result.object_type %}
+                      {% when 'product' %}
+                        Product
+                      {% when 'article' %}
+                        Article
+                      {% when 'page' %}
+                        Page
+                      {% else %}
+                        Content
+                    {% endcase %}
+                  </span>
+                </div>
+                
+                <div class="result-image">
+                  {% assign featured_image = result.featured_image | default: result.image %}
+                  {% if featured_image %}
+                    <img src="{{ featured_image | image_url: width: 400 }}" alt="{{ result.title }}" width="400" height="400">
+                  {% else %}
+                    <div class="result-placeholder">
+                      <div class="placeholder-content">
+                        {% case result.object_type %}
+                          {% when 'product' %}
+                            <span class="placeholder-icon">🏂</span>
+                            <span class="placeholder-text">Product Image</span>
+                          {% when 'article' %}
+                            <span class="placeholder-icon">📝</span>
+                            <span class="placeholder-text">Article</span>
+                          {% when 'page' %}
+                            <span class="placeholder-icon">📄</span>
+                            <span class="placeholder-text">Page</span>
+                          {% else %}
+                            <span class="placeholder-icon">📦</span>
+                            <span class="placeholder-text">Content</span>
+                        {% endcase %}
+                      </div>
+                    </div>
+                  {% endif %}
+                  <div class="result-overlay">
+                    <a href="{{ result.url }}" class="view-result">
+                      {% case result.object_type %}
+                        {% when 'product' %}
+                          View Product
+                        {% when 'article' %}
+                          Read Article
+                        {% when 'page' %}
+                          View Page
+                        {% else %}
+                          View Content
+                      {% endcase %}
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="result-info">
+                  <div class="result-category">
+                    {% case result.object_type %}
+                      {% when 'product' %}
+                        {{ result.type | default: "Snowboard" }}
+                      {% when 'article' %}
+                        {{ result.tags.first | default: "Blog" }}
+                      {% when 'page' %}
+                        Page
+                      {% else %}
+                        Content
+                    {% endcase %}
+                  </div>
+                  <h3 class="result-title">{{ result.title }}</h3>
+                  {% if result.object_type == 'product' %}
+                    <div class="result-rating">
+                      <div class="stars">★★★★★</div>
+                      <span class="rating-count">({{ forloop.index | plus: 15 }})</span>
+                    </div>
+                  {% elsif result.summary or result.content %}
+                    <p class="result-excerpt">{{ result.summary | default: result.content | strip_html | truncatewords: 15 }}</p>
+                  {% endif %}
+                  {% if result.object_type == 'product' and result.price %}
+                    <div class="result-price">
+                      {% if result.compare_at_price > result.price %}
+                        <span class="sale-price">{{ result.price | money }}</span>
+                        <span class="original-price">{{ result.compare_at_price | money }}</span>
+                      {% else %}
+                        <span class="current-price">{{ result.price | money }}</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
-  >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
-
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
-
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
-              </p>
+            <div class="pagination-wrapper">
+              {{ paginate | default_pagination }}
             </div>
-          </div>
-        {% endfor %}
-
-        {{ paginate | default_pagination }}
-      {% endpaginate %}
-    </div>
-  {% endif %}
-{% endif %}
+          {% endpaginate %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="search-prompt">
+        <div class="search-prompt-icon">🔍</div>
+        <h2>Search our store</h2>
+        <p>Enter your search terms to find products, articles, and pages.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
 
 {% stylesheet %}
+.search-page {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  min-height: 100vh;
+}
+
+.section-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.search-title {
+  text-align: center;
+  font-size: 3rem;
+  color: #1e293b;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.search-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.search-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.search-results-info {
+  font-size: 1.2rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.no-results,
+.search-prompt {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.no-results-icon,
+.search-prompt-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.no-results h2,
+.search-prompt h2 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.no-results p,
+.search-prompt p {
+  font-size: 1.1rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.search-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.result-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: all 0.4s ease;
+  position: relative;
+  animation: cardSlideUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes cardSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.result-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sale-badge,
+.type-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+.sale-badge {
+  width: fit-content;
+  background: linear-gradient(45deg, #ff4757, #ff3838);
+}
+
+.type-badge {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.result-image {
+  position: relative;
+  overflow: hidden;
+  height: 250px;
+}
+
+.result-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.result-card:hover .result-image img {
+  transform: scale(1.1);
+}
+
+.result-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  flex-direction: column;
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.placeholder-icon {
+  font-size: 2.5rem;
+  opacity: 0.7;
+}
+
+.placeholder-text {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.result-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.result-card:hover .result-overlay {
+  opacity: 1;
+}
+
+.view-result {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.result-card:hover .view-result {
+  transform: translateY(0);
+}
+
+.view-result:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.result-info {
+  padding: 1.5rem;
+}
+
+.result-category {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-title {
+  font-size: 1.25rem;
+  color: #1e293b;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.result-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  color: #fbbf24;
+  font-size: 0.9rem;
+}
+
+.rating-count {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.result-excerpt {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.result-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.current-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.sale-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.original-price {
+  font-size: 1rem;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.pagination-wrapper {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.pagination a,
+.pagination span {
+  display: inline-block;
+  padding: 0.8rem 1.2rem;
+  margin: 0 0.25rem;
+  background: white;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.pagination a:hover {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.pagination .current {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  color: white;
+}
+
+@media (max-width: 768px) {
   .search-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
   }
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+  
+  .search-title {
+    font-size: 2.5rem;
   }
+  
+  .section-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-results {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .search-title {
+    font-size: 2rem;
+  }
+}
 {% endstylesheet %}
+
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  const resultCards = document.querySelectorAll('.result-card');
+  
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const card = entry.target;
+        const index = Array.from(resultCards).indexOf(card);
+        
+        setTimeout(() => {
+          card.style.animationDelay = '0s';
+          card.style.animation = 'cardSlideUp 0.6s ease-out forwards';
+        }, index * 50);
+        
+        cardObserver.unobserve(card);
+      }
+    });
+  }, observerOptions);
+
+  resultCards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px)';
+    cardObserver.observe(card);
+  });
+});
+{% endjavascript %}
 
 {% schema %}
 {
