@@ -8,7 +8,9 @@
   {% if collection %}
     <a href="{{ routes.collection_url }}" class="breadcrumb-link">{{ collection.title }}</a>
   
-    <span class="breadcrumb-separator">></span>
+    {% if product %}
+      <span class="breadcrumb-separator">></span>
+    {% endif %}
   {% endif %}
   
   <span class="breadcrumb-current">{{ product.title }}</span>
