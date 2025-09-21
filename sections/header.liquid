@@ -1,13 +1,25 @@
 <header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
 
-  <div class="header__menu">
+  <a href="{{ routes.root_url }}" class="header__logo">
+    <img src="https://cdn.shopify.com/s/files/1/0707/3857/5551/files/image.png?v=1758475044" alt="Shop Logo" class="site-logo" width="124" height="124">  
+  </a>
+
+  <div class="header__search">
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <input type="search" name="q" placeholder="Search products..." aria-label="Search products" required>
+      <button type="submit" aria-label="Search">
+        {{ 'icon-search.svg' | inline_asset_content }}
+      </button>
+    </form>
+  </div>
+
+
+
+  {% comment %} <div class="header__menu">
     {% for link in section.settings.menu.links %}
       {{ link.title | link_to: link.url }}
     {% endfor %}
-  </div>
+  </div> {% endcomment %}
 
   <div class="header__icons">
     {% if shop.customer_accounts_enabled %}
@@ -26,10 +38,11 @@
 
 {% stylesheet %}
   header {
-    height: 5rem;
+    height: 8rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    
   }
   header a {
     position: relative;
@@ -49,6 +62,18 @@
   header .header__icons {
     display: flex;
     gap: 1rem;
+  }
+  .header__logo {
+    margin-bottom: 1rem;
+  }
+  .header__search input[type="search"] {
+    width: 25rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 15rem;
+    font-size: 1rem;
+    outline: none;
+
   }
 {% endstylesheet %}
 

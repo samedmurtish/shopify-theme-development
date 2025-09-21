@@ -65,8 +65,9 @@
       <h2 class="section-title">Featured Snowboards</h2>
       <div class="view-options">
         <span class="view-label">View:</span>
-        <button class="view-btn active" data-columns="3">3</button>
-        <button class="view-btn" data-columns="5">4</button>
+        <button class="view-btn " data-columns="3">3</button>
+        <button class="view-btn" data-columns="4">4</button>
+        <button class="view-btn active" data-columns="5">5</button>
       </div>
     </div>
     
@@ -102,7 +103,7 @@
           
           <div class="product-info">
             <div class="product-category">Snowboard</div>
-            <h3 class="text-2xl font-normal">{{ product.title }}</h3>
+            <h3 class="text-xl font-normal">{{ product.title }}</h3>
             <div class="product-rating">
               <div class="stars">★★★★★</div>
               <span class="rating-count">({{ forloop.index | plus: 15 }})</span>
@@ -794,18 +795,11 @@
 }
 
 .section-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
-.section-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: #1f2937;
-}
 
 .featured-products {
   padding: 6rem 0;
@@ -1056,10 +1050,7 @@
   .hero-title {
     font-size: 2.5rem;
   }
-  
-  .section-title {
-    font-size: 2rem;
-  }
+
   
   .newsletter-form {
     flex-direction: column;

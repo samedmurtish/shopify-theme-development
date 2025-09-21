@@ -9,10 +9,12 @@
 
 <form action="{{ routes.cart_url }}" method="post">
   <table>
+    {% assign cart_total = 0 %}
     {% for item in cart.items %}
+      {% assign cart_total = cart_total | plus: item.line_price %}
       <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
+        <td class="w-16 h-16">
+          {% render 'image', class: 'cart-item-image w-16 h-16', image: item.image, url: item.url, width: 50, height: 50 %}
         </td>
         <td>
           <p>{{ item.product.title }}</p>
@@ -26,8 +28,16 @@
     {% endfor %}
   </table>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
+  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}"> {{ cart_total | money }}
 </form>
+
+{% stylesheet %}
+  .cart-item-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
