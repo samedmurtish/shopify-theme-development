@@ -4,13 +4,19 @@
     <img src="https://cdn.shopify.com/s/files/1/0707/3857/5551/files/image.png?v=1758475044" alt="Shop Logo" class="site-logo" width="124" height="124">  
   </a>
 
-  <div class="header__search">
+  <div class="header__search flex flex-col gap-3">
     <form action="{{ routes.search_url }}" method="get" role="search">
       <input type="search" name="q" placeholder="Search products..." aria-label="Search products" required>
       <button type="submit" aria-label="Search">
         {{ 'icon-search.svg' | inline_asset_content }}
       </button>
     </form>
+    <div class="collections flex gap-5">
+      <a href="{{ routes.collections_url }}">All Collections</a>
+      {% for collection in collections %}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+      {% endfor %}
+      </div>
   </div>
 
 
@@ -33,10 +39,18 @@
 
       {{ 'icon-cart.svg' | inline_asset_content }}
     </a>
-  </div>
+  </div>  
 </header>
 
 {% stylesheet %}
+  .collections a:hover{
+    color: #252525;
+    text-decoration: underline;
+  }
+  .collections a {
+    color: #191919;
+    transition: color 0.15s ease;
+  }
   header {
     height: 8rem;
     display: flex;
