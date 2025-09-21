@@ -1,0 +1,46 @@
+<nav class="breadcrumb">
+  <a href="{{ routes.root_url }}" class="breadcrumb-link">Home</a>
+  <span class="breadcrumb-separator">></span>
+
+  <a href="{{ routes.collections_url }}" class="breadcrumb-link">All Collections</a>
+    <span class="breadcrumb-separator">></span>
+
+  {% if collection %}
+    <a href="{{ routes.collection_url }}" class="breadcrumb-link">{{ collection.title }}</a>
+  
+    <span class="breadcrumb-separator">></span>
+  {% endif %}
+  
+  <span class="breadcrumb-current">{{ product.title }}</span>
+</nav>
+
+{% stylesheet %}
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .breadcrumb-link {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .breadcrumb-link:hover {
+    color: #333;
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-separator {
+    color: #999;
+    user-select: none;
+  }
+  
+  .breadcrumb-current {
+    color: #333;
+    font-weight: 500;
+  }
+{% endstylesheet %}

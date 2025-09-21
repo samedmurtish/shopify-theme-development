@@ -1,0 +1,84 @@
+<div class="reviews-section">
+  <div class="reviews-header">
+    <h2>Customer Reviews</h2>
+    <button class="write-review-btn" onclick="toggleReviewForm()">Write a Review</button>
+  </div>
+  
+  <div class="review-form-container" id="reviewForm" style="display: none;">
+    <form class="review-form" onsubmit="submitReview(event)">
+      <h3>Write Your Review</h3>
+      
+      <div class="form-group">
+        <label for="reviewer-name">Your Name</label>
+        <input type="text" id="reviewer-name" name="name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="reviewer-email">Email (Optional)</label>
+        <input type="email" id="reviewer-email" name="email">
+      </div>
+      
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="star-input" id="starInput">
+          <span class="star-btn" data-rating="1">★</span>
+          <span class="star-btn" data-rating="2">★</span>
+          <span class="star-btn" data-rating="3">★</span>
+          <span class="star-btn" data-rating="4">★</span>
+          <span class="star-btn" data-rating="5">★</span>
+        </div>
+        <input type="hidden" id="rating-value" name="rating" value="0">
+      </div>
+      
+      <div class="form-group">
+        <label for="review-title">Review Title</label>
+        <input type="text" id="review-title" name="title" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="review-content">Your Review</label>
+        <textarea id="review-content" name="content" rows="4" required></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" onclick="toggleReviewForm()">Cancel</button>
+        <button type="submit">Submit Review</button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="reviews-list">
+    {% assign review_objects = "5|John D.|Amazing quality and fast shipping!|I absolutely love this product. The quality is outstanding and it arrived much faster than expected.|2025-09-15|true,4|Sarah M.|Good value for the price|Nice product overall and I would definitely recommend it to others. Great customer service experience as well.|2025-09-10|true,5|Mike R.|Perfect purchase decision!|Exactly what I was looking for and couldn't be happier with this purchase. Will definitely buy from this store again.|2025-09-05|false" | split: ',' %}
+    
+    {% for review_string in review_objects %}
+      {% assign review_data = review_string | split: '|' %}
+      {% assign review_rating = review_data[0] | plus: 0 %}
+      {% assign review_author = review_data[1] %}
+      {% assign review_title = review_data[2] %}
+      {% assign review_content = review_data[3] %}
+      {% assign review_date = review_data[4] %}
+      {% assign review_verified = review_data[5] %}
+      
+      <div class="review-item" data-review-id="{{ forloop.index }}" data-rating="{{ review_rating }}">
+        <div class="review-header">
+          <div class="review-stars">
+            {% for i in (1..5) %}
+              <span class="star {% if i <= review_rating %}filled{% endif %}">★</span>
+            {% endfor %}
+            {% if review_verified == 'true' %}
+              <span class="verified-badge">✓ Verified Purchase</span>
+            {% endif %}
+          </div>
+          <div class="review-meta">
+            <span class="review-author">{{ review_author }}</span>
+            <span class="review-date">{{ review_date | date: '%B %d, %Y' }}</span>
+          </div>
+        </div>
+        <div class="review-content">
+          <h4 class="review-title">{{ review_title }}</h4>
+          <p>{{ review_content }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

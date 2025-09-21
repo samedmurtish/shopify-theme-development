@@ -1,0 +1,35 @@
+<div class="product-images-section sticky-images">
+  {% if product.images.size > 0 %}
+    <div class="thumbnails-column">
+      {% for image in product.images %}
+        <div class="thumbnail-item {% if forloop.first %}active{% endif %}" data-image-url="{{ image | image_url: width: 800 }}">
+          <img src="{{ image | image_url: width: 80 }}" alt="{{ product.title }}" width="80" height="80" class="thumbnail-image">
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="main-image-container">
+      <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}" id="main-product-image" class="main-product-image" width="800" height="800">
+    </div>
+  {% else %}
+    <div class="no-image-placeholder">
+      <span>No image available</span>
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+.sticky-images {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .sticky-images {
+    position: static;
+    top: auto;
+  }
+}
+{% endstylesheet %}

@@ -1,0 +1,41 @@
+<div class="stock-status">
+  {% if product.available %}
+    {% assign inventory = current_variant.inventory_quantity | default: 0 %}
+    {% if inventory > 0 %}
+      <span class="in-stock">{{ inventory }} in stock</span>
+    {% else %}
+      <span class="low-stock">Low stock</span>
+    {% endif %}
+  {% else %}
+    <span class="out-of-stock">0 in stock</span>
+  {% endif %}
+</div>
+
+{% assign quantity = 1 %}
+{% if product.available %}
+  {% assign max_quantity = current_variant.inventory_quantity | default: 99 %}
+{% else %}
+  {% assign max_quantity = 0 %}
+{% endif %}
+
+<input type="hidden" name="id" value="{{ current_variant.id }}">
+
+<div class="purchase-controls">
+  <div class="quantity-selector">
+    <button type="button" class="qty-btn minus">−</button>
+    <input type="number" name="quantity" value="{{ quantity }}" min="1" max="{{ max_quantity }}" class="qty-input" id="quantity-input">
+    <button type="button" class="qty-btn plus">+</button>
+  </div>
+  
+  <button type="submit" class="add-to-cart-btn" {% unless product.available %}disabled{% endunless %}>
+    {% if product.available %}
+      Add to cart
+    {% else %}
+      Sold out
+    {% endif %}
+  </button>
+</div>
+
+{% if product.available %}
+  <button type="button" class="buy-now-btn">Buy it now</button>
+{% endif %}

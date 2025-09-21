@@ -1,0 +1,31 @@
+{% if product.variants.size > 1 %}
+  <div class="variant-selection-section">
+    <label class="selection-label">Choose Variant: <span class="selected-variant">{{ current_variant.title }}</span></label>
+    
+    <div class="variant-options">
+      {% for variant in product.variants %}
+        <div class="variant-option {% if variant == current_variant %}active{% endif %}" 
+             data-variant-id="{{ variant.id }}"
+             data-variant-title="{{ variant.title }}"
+             data-variant-price="{{ variant.price | money }}"
+             data-variant-image="{% if variant.featured_image %}{{ variant.featured_image | image_url: width: 800 }}{% else %}{{ product.featured_image | image_url: width: 800 }}{% endif %}"
+             data-available="{{ variant.available }}">
+          <div class="variant-content">
+            <div class="variant-info">
+              <span class="variant-title">{{ variant.title }}</span>
+              <span class="variant-price">{{ variant.price | money }}</span>
+            </div>
+            {% if variant.featured_image %}
+              <div class="variant-image-preview">
+                <img src="{{ variant.featured_image | image_url: width: 60 }}" alt="{{ variant.title }}" width="60" height="60" class="variant-thumb">
+              </div>
+            {% endif %}
+            {% unless variant.available %}
+              <div class="variant-unavailable">Sold Out</div>
+            {% endunless %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

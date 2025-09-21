@@ -1,0 +1,25 @@
+{% unless product.available %}
+  <div class="sold-out-badge">Sold out</div>
+{% endunless %}
+
+<h1 class="product-title-main">{{ product.title }}</h1>
+
+<div class="product-rating-section">
+  {% assign rating = 4.5 %}
+  {% assign review_count = 3 %}
+  <div class="stars-container">
+    {% for i in (1..5) %}
+      <span class="star-icon {% if i <= rating %}filled{% endif %}">★</span>
+    {% endfor %}
+    <span class="review-count">({{ review_count }})</span>
+  </div>
+</div>
+
+<div class="product-price-section">
+  {% if product.compare_at_price > product.price %}
+    <span class="price-sale">${{ product.price | money_without_currency }}</span>
+    <span class="price-compare">${{ product.compare_at_price | money_without_currency }}</span>
+  {% else %}
+    <span class="price-regular">${{ product.price | money_without_currency }}</span>
+  {% endif %}
+</div>
