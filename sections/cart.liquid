@@ -16,9 +16,11 @@
         <td class="w-16 h-max">
           {% render 'image', class: 'cart-item-image w-16 h-16', image: item.image, url: item.url, width: 250, height: 250 %}
         </td>
-        <td>
+        <td class="gap-1 flex flex-col justify-center h-full">
           <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
+          <div class="cart-item-remove">
+            {{ 'cart.remove' | t | link_to: item.url_to_remove }}
+          </div>
         </td>
         <td class="text-right">
           <input type="number" min="1" max="{{ item.product.variants[0].inventory_quantity }}" name="updates[]" value="{{ item.quantity }}" class="w-16 p-2 pl-4 text-center border border-gray-300 rounded-md">
@@ -42,6 +44,22 @@
 </form>
 
 {% stylesheet %}
+  .cart-item-remove a:hover {
+    background-color: #FF696A;
+    color: white;
+  }
+  .cart-item-remove a {
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    width: fit-content;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #FF696A;
+    border: 2px solid transparent;
+    border-color: #FF696A50;
+    transition: all 0.3s ease;
+  }
   .cart-style {
     display: flex;
     flex-direction: row;
