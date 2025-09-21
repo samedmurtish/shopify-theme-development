@@ -7,35 +7,96 @@
 
 <h1>{{ 'cart.title' | t }}</h1>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
+<form action="{{ routes.cart_url }}" method="post" class="cart-style">
+  <table class="w-full h-max cart-list">
     {% assign cart_total = 0 %}
     {% for item in cart.items %}
       {% assign cart_total = cart_total | plus: item.line_price %}
-      <tr>
-        <td class="w-16 h-16">
-          {% render 'image', class: 'cart-item-image w-16 h-16', image: item.image, url: item.url, width: 50, height: 50 %}
+      <tr class="h-max">
+        <td class="w-16 h-max">
+          {% render 'image', class: 'cart-item-image w-16 h-16', image: item.image, url: item.url, width: 250, height: 250 %}
         </td>
         <td>
           <p>{{ item.product.title }}</p>
           {{ 'cart.remove' | t | link_to: item.url_to_remove }}
         </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
+        <td class="text-right">
+          <input type="number" min="1" max="{{ item.product.variants[0].inventory_quantity }}" name="updates[]" value="{{ item.quantity }}" class="w-16 p-2 pl-4 text-center border border-gray-300 rounded-md">
+          <input type="submit" value="{{ 'cart.update' | t }} " class="update-btn">
         </td>
       </tr>
     {% endfor %}
   </table>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}"> {{ cart_total | money }}
+  <div class="w-full h-full flex flex-col gap-4 justify-between items-center p-4 total-cart">
+    <div class="w-full">
+      {% for item in cart.items %}
+        <p class="flex justify-between text-lg w-full gap-10">{{ item.quantity }} x {{ item.product.title }} <span>{{ item.line_price | money }}</span></p>
+      {% endfor %}
+    </div>
+    <div class="w-full flex flex-col items-center gap-4">
+      <p class="text-2xl font-bold w-full flex justify-between">Total <span>{{ cart_total | money }}</span></p>
+      <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}" class="checkout-btn"> 
+    </div>
+  </div>
 </form>
 
 {% stylesheet %}
+  .cart-style {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    min-height: 70dvh;
+  }
   .cart-item-image {
     width: 50px;
     height: 50px;
     object-fit: cover;
+  }
+  .update-btn:active {
+    background-color: #d1d5db;
+  }
+  .update-btn:hover {
+    background-color: #e5e7eb;
+  }
+  .update-btn {
+    background-color: #f3f4f6;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  .checkout-btn:active {
+    background-color: #333333;
+  }
+  .checkout-btn:hover {
+    background-color: #252525;
+  }
+  .checkout-btn {
+    background-color: #191919;
+    width: 100%;
+    height: 4rem;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .cart-list
+  {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    height: fit-content;
+  }
+  .total-cart {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    height: fit-content;
   }
 {% endstylesheet %}
 
