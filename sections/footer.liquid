@@ -2,13 +2,7 @@
   <div class="footer__copyright">
     &copy;
     {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
-
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
+    Designed by <a class="footer__link" href="https://samedmurtis.netlify.app/">Samed Murtish</a>,  All rights reserved.
   </div>
 
   <div class="footer__payment">
@@ -25,15 +19,26 @@
     display: flex;
     justify-content: space-between;
     margin-top: 2rem;
+    background-color: #1e293b;
+    padding: 1rem 2rem;
+    color: white;
+    border-radius: 2rem 2rem 0px 0px;
   }
   footer a {
     text-decoration: none;
-    color: var(--color-foreground);
   }
   footer .footer__links,
   footer .footer__payment {
     display: flex;
     gap: 1rem;
+  }
+  .footer__link:hover {
+    color: #ffaeff;
+    text-decoration: underline;
+  }
+  .footer__link {
+    color: violet;
+    transition: color 0.15s ease;
   }
 {% endstylesheet %}
 
