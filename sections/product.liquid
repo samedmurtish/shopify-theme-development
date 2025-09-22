@@ -2,8 +2,9 @@
   assign current_variant = product.selected_or_first_available_variant
 %}
 
+<div class="breadcrumb">
 {% render 'breadcrumb-nav', product: product, collection: collection %}
-
+</div>
 <section class="product-page">
   <div class="product-container">
     <div class="product-main">
@@ -28,9 +29,12 @@
 {% render 'product-javascript' %}
 
 {% stylesheet %}
-.product-page {
-  padding: 2rem 0;
+.breadcrumb {
+  margin-top: 1rem;
 }
+/* .product-page {
+  padding: 2rem 0;
+}  */
 
 .product-container {
   max-width: 1200px;
